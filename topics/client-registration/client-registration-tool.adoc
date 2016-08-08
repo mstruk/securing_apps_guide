@@ -35,19 +35,49 @@ Make sure the client works:
 ----
 
 
+
+[[_configure_user_for_reg_cli]]
+=== Configuring a new regular user for use with Client Registration Tool
+
+Login as 'admin' into Admin Console (e.g. http://localhost:8080/auth/admin). Select a realm you want to administer. If you want to use existing user, select it for edit, otherwise create a new user. Go to Role Mappings tab. Under Client Roles select 'realm-management'. Under Available Roles select 'manage-client' for full set of client management permissions. Alternatively you can choose 'view-clients' for read-only or 'create-client' for ability to create new clients. These permissions grant user the capability to perform operations without the use of Initial Access Token or Registration Access Token.
+
+It's possible to not assign users any of 'realm-management' roles. In that case user can still login with Client Registration Tool but will not be able to use it without having possession of an Initial Access Token. Trying to perform any operations without it will result in '403 Forbidden' error.
+
+Administrator can issue Initial Access Tokens from Admin Console by selecting Initial Access Token tab under Realm Settings.
+
+
+
+=== Configuring a client for use with Client Registration Tool
+
+By default the Client Registration Tool uses 'admin-cli' client which is automatically configured for every new realm. No additional client configuration is required to login with existing username.
+
+You may wish to firm up security by configuring the client Access Type as Confidential, and under Credentials tab select ClientId and Secret. When logging in with Client Registration Tool you then also have to provide a secret e.g. by using --secret argument.
+
+If you want to use a separate client configuration for Client Registration Tool, you can create a new client - for example you can call it 'reg-cli'. When logging in you then need to specify a clientId to use e.g. -c reg-cli.
+
+You may want to enable a service account associated with the client. In that case there is no user password, only client credentials. To enable service account go in Admin Console to Clients section, and select a client for edit. Then, under Settings change Access Type to Confidential. Finally, toggle Service Accounts Enabled setting to On, and Save the configuration.
+
+Under Credentials tab you can choose to configure either Client Id and Secret, or Signed JWT.
+
+There is now also a new tab called Service Account Roles where you can give service account the credentials for managing clients the same way you can do for regular user accounts.
+
+You can now avoid specifying username when logging in with Client Registration Tool, and only provide a client secret or keystore info.
+
+
+
 === Logging In
 
 In {{book.project.name}} a protection domain is represented by a 'realm'. When we login with Client Registration Tool we specify a server endpoint url, and a realm. Then we can specify a username, or not. If username is not specified then a special service account associated with the client id is used. By default, 'admin-cli' is the client id used by Client Registration Tool, but that can be overriden, and a custom value can be used.
 
-The authentication information used at login depends on how Client Registration Tool client is configured by administrator, and if a user should use their own account, or a service account.
+The authentication information used at login depends on how client used by Client Registration Tool is configured by administrator, and if a user should use their own account, or a service account.
 
-Depending on that, user may login with a username, and a password, or only use client secret, or both in which case user's account will be used but additional client authentication required provides an extra level of security if user's password is leaked.
+Depending on that, user may login with a username, and a password, or only use client secret, or even use both in which case user's account will be used but additional client authentication required provides an extra level of security if user's password is leaked.
 
-An alternative to client secret is to use a signed JWT mechanism, which requires a keystore with a private key. It's up to a realm administrator to configure the clients, generate secrets, and private-public keys, and dispatch them to users.
+An alternative to client secret is to use a signed JWT mechanism, which requires a keystore with a private key. It's up to a realm administrator to configure the clients, generate secrets, and private-public keys, and dispatch them to users of Client Registration Tool.
 
-Regardless of the method, the account used for login can only perform client management operations for which it has permissions. Any account can only have permissions to manage clients within the same realm. If you need to manage different realms, you need to configure users / service accounts in different realms.
+Regardless of the login method, the account used for login can only perform client management operations for which it has permissions. An account can only have permissions to manage clients within the same realm. If you need to manage different realms, you need to configure users / service accounts in different realms.
 
-See <<fake/../client_registration.adoc, Client Registration>> for more on client management permissions, and <<client_registration_tool.adoc#_configure_user_for_reg_cli, next chapter>> for more on how to configure a user through Admin Console.
+See <<fake/../client_registration.adoc, Client Registration>> for more on client management permissions, and <<client_registration_tool.adoc#_configure_user_for_reg_cli, previous chapters>> for more on how to configure a user through Admin Console.
 
 
 Here are some examples of logging in.
@@ -104,30 +134,24 @@ Login using 'user' username, and a client with client id 'reg-cli', authenticati
 ----
 
 
-[[_configure_user_for_reg_cli]]
-==== Configuring a new regular user for use with Client Registration Tool
-
-Login as 'admin' into Admin Console (e.g. http://localhost:8080/auth/admin). Select a realm you want to administer. If you want to use existing user, select it for edit, otherwise create a new user. Go to Role Mappings tab. Under Client Roles select 'realm-management'. Under Available Roles select 'manage-client' for full set of client management permissions. Alternatively you can choose 'view-clients' for read-only or 'create-client' for ability to create new clients. These permissions grant user the capability to perform operations without the use of Initial Access Token or Registration Access Token.
-
-It's possible to not assign users any of 'realm-management' roles. In that case user can still login with Client Registration Tool but will not be able to use it without having possession of an Initial Access Token. Trying to perform any operations without it will result in '403 Forbidden' error.
-
-Administrator can issue Initial Access Tokens from Admin Console by selecting Initial Access Token tab under Realm Settings.
+When client tool successfully logs in it receives authorization tokens and saves them into a private config file so they can be used for subsequent invocations. By default the location of this file is $HOME/.keycloak/kcreg.cache, but can be overridden when invoking kcreg tool - e.g. 'kcreg -c /tmp/.kcreg_server1.conf'
 
 
-==== Configuring a client for use with Client Registration Tool
 
-By default the Client Registration Tool uses 'admin-cli' client which is automatically configured for every new realm. No additional client configuration is required when using login with a username.
+=== Creating a new client
+TODO
 
-You may wish to firm up security by configuring the client Access Type as Confidential, and under Credentials tab select ClientId and Secret. When running 'kcreg login' you then also have to provide a secret e.g. by using --secret.
+=== Getting existing client config
+TODO
 
-If you want to use a separate client configuration for Client Registration Tool then you can create a new client - for example you can call it 'reg-cli'. When running 'kcreg login' you then need to specify a clientId to use e.g. -c reg-cli.
+=== Updating a client
+TODO
 
-You may want to enable a service account associated with the client. In that case there is no user password, only client credentials. To enable service account go in Admin Console to Clients section, and select a client for edit. Then under Settings first change Access Type to Confidential. Then toggle Service Accounts Enabled setting to On, and Save the configuration.
+=== Deleting a client
+TODO
 
-Under Credentials tab you can choose to configure either Client Id and Secret, or Signed JWT.
+=== Updating a registration access token
+TODO
 
-You can now avoid specifying user when using 'kcreg login' and only provide a client secret or keystore info. 
 
-
-=== Creating a client
 
