@@ -78,3 +78,4 @@
  {% endif %}
  .. link:topics/saml/mod-auth-mellon.adoc[mod_auth_mellon Apache HTTPD Module]
  . link:topics/client-registration.adoc[Client Registration]
+ .. link:topics/client-registration/client-registration-tool.adoc[Client Registration Tool]
