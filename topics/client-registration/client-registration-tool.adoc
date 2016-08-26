@@ -30,10 +30,10 @@ Administrator can issue `Initial Access Tokens` from `Admin Console` by selectin
 By default the `Registration Client Tool` uses `admin-cli` client which is automatically configured for every new realm.
 No additional client configuration is required when using login with a username. You may wish to firm up security by
 configuring the client `Access Type` as `Confidential`, and under `Credentials` tab select `ClientId and Secret`. When
-running `kcreg login` you then also have to provide a secret e.g. by using `--secret`.
+running `kcreg config set-credentials` you then also have to provide a secret e.g. by using `--secret`.
 
 If you want to use a separate client configuration for `Registration Client Tool` then you can create a new client - for
-example you can call it `reg-cli`. When running `kcreg login` you then need to specify a `clientId` to use e.g. `-c reg-cli`.
+example you can call it `reg-cli`. When running `kcreg config set-credentials` you then need to specify a `clientId` to use e.g. `-c reg-cli`.
 
 If you want to use a service account associated with the client, then you need to enable a service account. In `Admin Client`
 you go to `Clients` section, and select a client for edit. Then under `Settings` first change `Access Type` to `Confidential`.
@@ -41,7 +41,7 @@ Then toggle `Service Accounts Enabled` setting to `On`, and `Save` the configura
 
 Under `Credentials` tab you can choose to configure either `Client Id and Secret`, or `Signed JWT`.
 
-You can now avoid specifying user when using `kcreg login` and only provide a client secret or keystore info.
+You can now avoid specifying user when using `kcreg config set-credentials` and only provide a client secret or keystore info.
 
 === Installing Client Registration Tool
 
@@ -78,7 +78,7 @@ For example:
 
 [source,bash]
 ----
-$ kcreg login -s http://localhost:8080/auth -r demo -c reg-cli --secret $CLIENT_SECRET
+$ kcreg config set-credentials -s http://localhost:8080/auth -r demo -c reg-cli --secret $CLIENT_SECRET
 $ kcreg create -s clientId=my_client -s 'redirectUris=["http://localhost:8980/myapp/*"]' -t $INITIAL_ACCESS_TOKEN
 ----
 
@@ -101,7 +101,7 @@ For more information on using the tool see integrated help:
 [source,bash]
 ----
 $ kcreg help
-$ kcreg help login
+$ kcreg help config
 $ kcreg help create
 ----
 
@@ -111,14 +111,14 @@ Login into default server (`http://localhost:8080/auth`) as user `admin` of `mas
 
 [source,bash]
 ----
-$ kcreg login -r master -u admin
+$ kcreg config set-credentials -r master -u admin
 ----
 
 Login into `http://localhost:9080/auth` as user `admin` of `master` realm, passing a password via a standard input.
 
 [source,bash]
 ----
-$ kcreg login -s http://localhost:9080/auth -r master -u admin << EOF
+$ kcreg config set-credentials -s http://localhost:9080/auth -r master -u admin << EOF
 mypassword
 EOF
 ----
@@ -127,14 +127,14 @@ Login as user `admin` of `master` realm, using env variable PASSWORD as a passwo
 
 [source,bash]
 ----
-$ kcreg login -r master -u admin -p $PASSWORD
+$ kcreg config set-credentials -r master -u admin -p $PASSWORD
 ----
 
 Login using a service account for client `reg-cli`. You will be prompted for client secret:
 
 [source,bash]
 ----
-$ kcreg login -r master -c reg-cli
+$ kcreg config set-credentials -r master -c reg-cli
 ----
 
 Login as user `admin` of `master` realm, and authenticating the default client (admin-cli) with a secret.
@@ -142,21 +142,21 @@ You will be prompted for a user password, and for a client secret:
 
 [source,bash]
 ----
-$ kcreg login -r master -u admin --secret -
+$ kcreg config set-credentials -r master -u admin --secret -
 ----
 
 Login using a service account for client `reg-cli`, authenticating the client with a signed JWT. You will be prompted for a keystore password, and a key password. Alias `reg-cli` will be used to retrieve the key:
 
 [source,bash]
 ----
-$ kcreg login -r master -c reg-cli -k ~/.keycloak/keystore.jks
+$ kcreg config set-credentials -r master -c reg-cli -k ~/.keycloak/keystore.jks
 ----
 
 Login using `user` username, and a client with client id `reg-cli`, authenticating the client with signed JWT. You will be prompted for a user password to authenticate user, and store and key passwords to authenticate the client:
 
 [source,bash]
 ----
-$ kcreg login -r master -u user -c reg-cli -k ~/.keycloak/keystore.jks
+$ kcreg config set-credentials -r master -u user -c reg-cli -k ~/.keycloak/keystore.jks
 ----
 
 
